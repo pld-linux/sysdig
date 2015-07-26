@@ -30,6 +30,7 @@ generate trace files that can be analyzed at a later stage.
 install -d build
 cd build
 %cmake \
+	-DDIR_ETC=%{_sysconfdir} \
 	-DBUILD_DRIVER=OFF \
 	-DUSE_BUNDLED_JSONCPP=OFF \
 	-DUSE_BUNDLED_LUAJIT=OFF \
@@ -43,10 +44,8 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} -C build install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-mv $RPM_BUILD_ROOT%{_prefix}/src/sysdig* $RPM_BUILD_ROOT%{_prefix}/src/sysdig-%{version}
-install -d $RPM_BUILD_ROOT%{_sysconfdir}
-mv $RPM_BUILD_ROOT%{_prefix}/etc/bash_completion.d $RPM_BUILD_ROOT%{_sysconfdir}
-rm -rf $RPM_BUILD_ROOT%{_datadir}/zsh
+# rename "sysdig-0.1.1-dev" to "sysdig-%{version}"
+mv $RPM_BUILD_ROOT%{_usrsrc}/{%{name}*,%{name}-%{version}}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -61,3 +60,5 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}
 %{_prefix}/src/sysdig-%{version}
 /etc/bash_completion.d/sysdig
+%{_datadir}/zsh/site-functions/_sysdig
+%{_datadir}/zsh/vendor-completions/_sysdig
