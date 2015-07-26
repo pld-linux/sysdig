@@ -29,6 +29,7 @@ License:	GPL v2
 Group:		Applications/System
 Source0:	https://github.com/draios/sysdig/archive/%{version}/%{pname}-%{version}.tar.gz
 # Source0-md5:	5fe96a3a0fd98b2157a40cb29af41afc
+Patch0:		buildflags.patch
 URL:		http://www.sysdig.org/
 BuildRequires:	rpmbuild(macros) >= 1.701
 %if %{with userspace}
@@ -128,6 +129,7 @@ This package contains Linux module.\
 
 %prep
 %setup -q -n %{pname}-%{version}
+%patch0 -p1
 
 # we need just obj-m from the file
 cp driver/Makefile{.in,}
