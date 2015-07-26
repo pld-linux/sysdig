@@ -73,6 +73,7 @@ install -d build
 cd build
 %cmake \
 	-DDIR_ETC=%{_sysconfdir} \
+	-DSYSDIG_VERSION=%{version}-%{release} \
 	-DBUILD_DRIVER=OFF \
 	-DUSE_BUNDLED_JSONCPP=OFF \
 	-DUSE_BUNDLED_LUAJIT=OFF \
@@ -85,9 +86,6 @@ cd build
 rm -rf $RPM_BUILD_ROOT
 %{__make} -C build install \
 	DESTDIR=$RPM_BUILD_ROOT
-
-# rename "sysdig-0.1.1-dev" to "sysdig-%{version}-%{release}"
-mv $RPM_BUILD_ROOT%{_usrsrc}/{%{name}*,%{name}-%{version}-%{release}}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
