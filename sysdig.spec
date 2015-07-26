@@ -30,13 +30,15 @@ Group:		Applications/System
 Source0:	https://github.com/draios/sysdig/archive/%{version}/%{pname}-%{version}.tar.gz
 # Source0-md5:	5fe96a3a0fd98b2157a40cb29af41afc
 URL:		http://www.sysdig.org/
+BuildRequires:	rpmbuild(macros) >= 1.701
+%if %{with userspace}
 BuildRequires:	cmake >= 2.8.2
 BuildRequires:	jsoncpp-devel
 BuildRequires:	libstdc++-devel >= 6:4.4
 BuildRequires:	luajit-devel >= 2.0.3
 BuildRequires:	ncurses-devel >= 5.9
-BuildRequires:	rpmbuild(macros) >= 1.701
 BuildRequires:	zlib-devel >= 1.2.8
+%endif
 %{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
