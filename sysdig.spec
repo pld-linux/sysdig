@@ -72,7 +72,7 @@ This package contains a DKMS-ready driver for sysdig.
 Summary:	bash-completion for sysdig
 Summary(pl.UTF-8):	Bashowe dopełnianie składni dla sysdig
 Group:		Applications/Shells
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} = %{version}-%{rel}
 Requires:	bash-completion
 %if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
@@ -84,7 +84,7 @@ bash-completion for sysdig.
 %package -n zsh-completion-%{name}
 Summary:	zsh-completion for sysdig
 Group:		Applications/Shells
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} = %{version}-%{rel}
 %if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
 %endif
@@ -141,7 +141,7 @@ install -d build
 cd build
 %cmake \
 	-DDIR_ETC=%{_sysconfdir} \
-	-DSYSDIG_VERSION=%{version}-%{release} \
+	-DSYSDIG_VERSION=%{version}-%{rel} \
 	-DBUILD_DRIVER=OFF \
 	-DUSE_BUNDLED_JSONCPP=OFF \
 	-DUSE_BUNDLED_LUAJIT=OFF \
@@ -167,12 +167,12 @@ cp -a installed/* $RPM_BUILD_ROOT
 rm -rf $RPM_BUILD_ROOT
 
 %post -n dkms-%{name}
-%{_sbindir}/dkms add -m %{name} -v %{version}-%{release} --rpm_safe_upgrade && \
-%{_sbindir}/dkms build -m %{name} -v %{version}-%{release} --rpm_safe_upgrade && \
-%{_sbindir}/dkms install -m %{name} -v %{version}-%{release} --rpm_safe_upgrade || :
+%{_sbindir}/dkms add -m %{name} -v %{version}-%{rel} --rpm_safe_upgrade && \
+%{_sbindir}/dkms build -m %{name} -v %{version}-%{rel} --rpm_safe_upgrade && \
+%{_sbindir}/dkms install -m %{name} -v %{version}-%{rel} --rpm_safe_upgrade || :
 
 %preun -n dkms-%{name}
-%{_sbindir}/dkms remove -m %{name} -v %{version}-%{release} --rpm_safe_upgrade --all || :
+%{_sbindir}/dkms remove -m %{name} -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 
 %if %{with userspace}
 %files
@@ -198,5 +198,5 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with dkms}
 %files -n dkms-%{name}
 %defattr(644,root,root,755)
-%{_usrsrc}/%{name}-%{version}-%{release}
+%{_usrsrc}/%{name}-%{version}-%{rel}
 %endif
