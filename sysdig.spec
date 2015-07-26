@@ -19,7 +19,7 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel	0.3
+%define		rel	1
 %define		pname	sysdig
 Summary:	sysdig, a system-level exploration and troubleshooting tool
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
