@@ -177,6 +177,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
+%doc README.md
 %attr(755,root,root) %{_bindir}/csysdig
 %attr(755,root,root) %{_bindir}/sysdig
 %attr(755,root,root) %{_bindir}/sysdig-probe-loader
