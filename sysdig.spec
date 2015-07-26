@@ -19,7 +19,7 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel	0.2
+%define		rel	0.3
 %define		pname	sysdig
 Summary:	sysdig, a system-level exploration and troubleshooting tool
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
@@ -39,6 +39,9 @@ BuildRequires:	rpmbuild(macros) >= 1.701
 BuildRequires:	zlib-devel >= 1.2.8
 %{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+# constify %{name}
+%{expand:%%global name %{pname}}
 
 %define		zshdir %{_datadir}/zsh/site-functions
 
@@ -121,7 +124,7 @@ This package contains Linux module.\
 %{?with_kernel:%{expand:%create_kernel_packages}}
 
 %prep
-%setup -q
+%setup -q -n %{pname}-%{version}
 
 # we need just obj-m from the file
 cp driver/Makefile{.in,}
