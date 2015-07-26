@@ -1,14 +1,33 @@
 #
 # Conditional build:
+%bcond_without	kernel		# don't build kernel modules
+%bcond_without	userspace	# don't build userspace programs
 %bcond_without	dkms		# build dkms package
 
-Summary:	sysdig
-Name:		sysdig
+%if "%{?alt_kernel}" != "" && 0%{?build_kernels:1}
+	%{error:alt_kernel (%{?alt_kernel}) and build_kernels (%{?build_kernels}) defined}
+%endif
+
+%if 0%{?_pld_builder:1} && %{with kernel} && %{with userspace}
+%{error:kernel and userspace cannot be built at the same time on PLD builders}
+exit 1
+%endif
+
+%if %{without userspace}
+%undefine	with_dkms
+# nothing to be placed to debuginfo package
+%define		_enable_debug_packages	0
+%endif
+
+%define		rel	0.2
+%define		pname	sysdig
+Summary:	sysdig, a system-level exploration and troubleshooting tool
+Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
 Version:	0.1.101
-Release:	0.1
+Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/System
-Source0:	https://github.com/draios/sysdig/archive/%{version}/%{name}-%{version}.tar.gz
+Source0:	https://github.com/draios/sysdig/archive/%{version}/%{pname}-%{version}.tar.gz
 # Source0-md5:	5fe96a3a0fd98b2157a40cb29af41afc
 URL:		http://www.sysdig.org/
 BuildRequires:	cmake >= 2.8.2
@@ -16,7 +35,9 @@ BuildRequires:	jsoncpp-devel
 BuildRequires:	libstdc++-devel >= 6:4.4
 BuildRequires:	luajit-devel >= 2.0.3
 BuildRequires:	ncurses-devel >= 5.9
+BuildRequires:	rpmbuild(macros) >= 1.701
 BuildRequires:	zlib-devel >= 1.2.8
+%{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		zshdir %{_datadir}/zsh/site-functions
@@ -65,10 +86,51 @@ BuildArch:	noarch
 %description -n zsh-completion-%{name}
 zsh-completion for sysdig.
 
+%define	kernel_pkg()\
+%package -n kernel%{_alt_kernel}-misc-%{pname}\
+Summary:	Linux driver for sysdig\
+Release:	%{rel}@%{_kernel_ver_str}\
+Group:		Base/Kernel\
+Requires(post,postun):	/sbin/depmod\
+%requires_releq_kernel\
+Requires(postun):	%releq_kernel\
+\
+%description -n kernel%{_alt_kernel}-misc-%{pname}\
+This is driver for sysdig-probe for Linux.\
+\
+This package contains Linux module.\
+\
+%if %{with kernel}\
+%files -n kernel%{_alt_kernel}-misc-%{pname}\
+%defattr(644,root,root,755)\
+/lib/modules/%{_kernel_ver}/misc/*.ko*\
+%endif\
+\
+%post	-n kernel%{_alt_kernel}-misc-%{pname}\
+%depmod %{_kernel_ver}\
+\
+%postun	-n kernel%{_alt_kernel}-misc-%{pname}\
+%depmod %{_kernel_ver}\
+%{nil}
+
+%define build_kernel_pkg()\
+%build_kernel_modules -C driver -m sysdig-probe\
+%install_kernel_modules -D installed -m driver/sysdig-probe -d misc\
+%{nil}
+
+%{?with_kernel:%{expand:%create_kernel_packages}}
+
 %prep
 %setup -q
 
+# we need just obj-m from the file
+cp driver/Makefile{.in,}
+%{__sed} -i -e 's/@KBUILD_FLAGS@//' driver/Makefile
+
 %build
+%{?with_kernel:%{expand:%build_kernel_packages}}
+
+%if %{with userspace}
 install -d build
 cd build
 %cmake \
@@ -81,11 +143,19 @@ cd build
 	-DUSE_BUNDLED_ZLIB=OFF \
 	..
 %{__make}
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
+%if %{with userspace}
 %{__make} -C build install \
 	DESTDIR=$RPM_BUILD_ROOT
+%endif
+
+%if %{with kernel}
+install -d $RPM_BUILD_ROOT
+cp -a installed/* $RPM_BUILD_ROOT
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -98,6 +168,7 @@ rm -rf $RPM_BUILD_ROOT
 %preun -n dkms-%{name}
 %{_sbindir}/dkms remove -m %{name} -v %{version}-%{release} --rpm_safe_upgrade --all || :
 
+%if %{with userspace}
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/csysdig
@@ -115,6 +186,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{zshdir}/_sysdig
 %{_datadir}/zsh/vendor-completions/_sysdig
+%endif
 
 %if %{with dkms}
 %files -n dkms-%{name}
