@@ -8,11 +8,11 @@ Source0:	https://github.com/draios/sysdig/archive/%{version}/%{name}-%{version}.
 # Source0-md5:	5fe96a3a0fd98b2157a40cb29af41afc
 URL:		http://www.sysdig.org/
 BuildRequires:	cmake >= 2.8.2
-BuildRequires:	gcc >= 6:4.4
 BuildRequires:	jsoncpp-devel
-BuildRequires:	luajit-devel
-BuildRequires:	ncurses-devel
-BuildRequires:	zlib-devel
+BuildRequires:	libstdc++-devel >= 6:4.4
+BuildRequires:	luajit-devel >= 2.0.3
+BuildRequires:	ncurses-devel >= 5.9
+BuildRequires:	zlib-devel >= 1.2.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
