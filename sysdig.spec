@@ -7,7 +7,12 @@ Group:		Applications/System
 Source0:	https://github.com/draios/sysdig/archive/%{version}/%{name}-%{version}.tar.gz
 # Source0-md5:	5fe96a3a0fd98b2157a40cb29af41afc
 URL:		http://www.sysdig.org/
-BuildRequires:	cmake >= 2.8
+BuildRequires:	cmake >= 2.8.2
+BuildRequires:	gcc >= 6:4.4
+BuildRequires:	jsoncpp-devel
+BuildRequires:	luajit-devel
+BuildRequires:	ncurses-devel
+BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -22,10 +27,14 @@ generate trace files that can be analyzed at a later stage.
 %setup -q
 
 %build
-mkdir build
+install -d build
 cd build
 %cmake \
 	-DBUILD_DRIVER=OFF \
+	-DUSE_BUNDLED_JSONCPP=OFF \
+	-DUSE_BUNDLED_LUAJIT=OFF \
+	-DUSE_BUNDLED_NCURSES=OFF \
+	-DUSE_BUNDLED_ZLIB=OFF \
 	..
 %{__make}
 
