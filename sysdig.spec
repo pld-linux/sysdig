@@ -1,3 +1,7 @@
+#
+# Conditional build:
+%bcond_without	dkms		# build dkms package
+
 Summary:	sysdig
 Name:		sysdig
 Version:	0.1.101
@@ -24,6 +28,18 @@ other OS events. Then, using sysdig's command line interface, you can
 filter and decode these events in order to extract useful information.
 Sysdig can be used to inspect systems live in real-time, or to
 generate trace files that can be analyzed at a later stage.
+
+%package -n dkms-%{name}
+Summary:	DKMS-ready driver for sysdig
+License:	GPL v2+
+Group:		Base/Kernel
+Requires(pre,post):	dkms >= 2.1.0.0
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
+
+%description -n dkms-%{name}
+This package contains a DKMS-ready driver for sysdig.
 
 %package -n bash-completion-%{name}
 Summary:	bash-completion for sysdig
@@ -70,11 +86,19 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} -C build install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-# rename "sysdig-0.1.1-dev" to "sysdig-%{version}"
-mv $RPM_BUILD_ROOT%{_usrsrc}/{%{name}*,%{name}-%{version}}
+# rename "sysdig-0.1.1-dev" to "sysdig-%{version}-%{release}"
+mv $RPM_BUILD_ROOT%{_usrsrc}/{%{name}*,%{name}-%{version}-%{release}}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post -n dkms-%{name}
+%{_sbindir}/dkms add -m %{name} -v %{version}-%{release} --rpm_safe_upgrade && \
+%{_sbindir}/dkms build -m %{name} -v %{version}-%{release} --rpm_safe_upgrade && \
+%{_sbindir}/dkms install -m %{name} -v %{version}-%{release} --rpm_safe_upgrade || :
+
+%preun -n dkms-%{name}
+%{_sbindir}/dkms remove -m %{name} -v %{version}-%{release} --rpm_safe_upgrade --all || :
 
 %files
 %defattr(644,root,root,755)
@@ -84,7 +108,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/csysdig.8*
 %{_mandir}/man8/sysdig.8*
 %{_datadir}/%{name}
-%{_prefix}/src/sysdig-%{version}
 
 %files -n bash-completion-%{name}
 %defattr(644,root,root,755)
@@ -94,3 +117,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{zshdir}/_sysdig
 %{_datadir}/zsh/vendor-completions/_sysdig
+
+%if %{with dkms}
+%files -n dkms-%{name}
+%defattr(644,root,root,755)
+%{_usrsrc}/%{name}-%{version}-%{release}
+%endif
