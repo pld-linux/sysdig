@@ -19,7 +19,7 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel	1
+%define		rel	2
 %define		pname	sysdig
 Summary:	sysdig, a system-level exploration and troubleshooting tool
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
@@ -158,6 +158,9 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with userspace}
 %{__make} -C build install \
 	DESTDIR=$RPM_BUILD_ROOT
+
+# already installed as %{zshdir}/_sysdig
+%{__rm} $RPM_BUILD_ROOT%{_datadir}/zsh/vendor-completions/_sysdig
 %endif
 
 %if %{with kernel}
@@ -194,7 +197,6 @@ rm -rf $RPM_BUILD_ROOT
 %files -n zsh-completion-%{name}
 %defattr(644,root,root,755)
 %{zshdir}/_sysdig
-%{_datadir}/zsh/vendor-completions/_sysdig
 %endif
 
 %if %{with dkms}
