@@ -39,9 +39,11 @@ BuildRequires:	libstdc++-devel >= 6:4.4
 BuildRequires:	luajit-devel >= 2.0.3
 BuildRequires:	ncurses-devel >= 5.9
 BuildRequires:	zlib-devel >= 1.2.8
+ExclusiveArch:	%{ix86} %{x8664}
+%else
+ExclusiveArch:	%{ix86} %{x8664} x32
 %endif
 %{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
-ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # constify %{name}
