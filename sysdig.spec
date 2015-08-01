@@ -4,10 +4,6 @@
 %bcond_without	userspace	# don't build userspace programs
 %bcond_without	dkms		# build dkms package
 
-%if "%{?alt_kernel}" != "" && 0%{?build_kernels:1}
-	%{error:alt_kernel (%{?alt_kernel}) and build_kernels (%{?build_kernels}) defined}
-%endif
-
 %if 0%{?_pld_builder:1} && %{with kernel} && %{with userspace}
 %{error:kernel and userspace cannot be built at the same time on PLD builders}
 exit 1
