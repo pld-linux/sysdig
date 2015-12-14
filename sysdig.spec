@@ -1,7 +1,11 @@
 # TODO
 # - fix kernel build
+#    Reason: /usr/src/BUILD/sysdig-0.5.1/driver/main.c:51:27: fatal error: driver_config.h: No such file or directory
 # - fix downloading extra deps
 # - fix userspace openssl build
+#
+# NOTES:
+# - https://github.com/draios/sysdig/wiki/How-to-Install-Sysdig-from-the-Source-Code
 #
 # Conditional build:
 %bcond_without	kernel		# don't build kernel modules
