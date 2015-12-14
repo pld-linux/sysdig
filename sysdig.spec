@@ -38,10 +38,12 @@ URL:		http://www.sysdig.org/
 BuildRequires:	rpmbuild(macros) >= 1.701
 %if %{with userspace}
 BuildRequires:	cmake >= 2.8.2
+BuildRequires:	curl-devel >= 7.45.0
 BuildRequires:	jsoncpp-devel
 BuildRequires:	libstdc++-devel >= 6:4.4
 BuildRequires:	luajit-devel >= 2.0.3
 BuildRequires:	ncurses-devel >= 5.9
+BuildRequires:	openssl-devel >= 1.0.2
 BuildRequires:	zlib-devel >= 1.2.8
 ExclusiveArch:	%{ix86} %{x8664}
 %else
@@ -151,9 +153,11 @@ cd build
 	-DDIR_ETC=%{_sysconfdir} \
 	-DSYSDIG_VERSION=%{version}-%{rel} \
 	-DBUILD_DRIVER=OFF \
+	-DUSE_BUNDLED_CURL=OFF \
 	-DUSE_BUNDLED_JSONCPP=OFF \
 	-DUSE_BUNDLED_LUAJIT=OFF \
 	-DUSE_BUNDLED_NCURSES=OFF \
+	-DUSE_BUNDLED_OPENSSL=OFF \
 	-DUSE_BUNDLED_ZLIB=OFF \
 	..
 %{__make}
