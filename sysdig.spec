@@ -1,3 +1,7 @@
+# TODO
+# - fix kernel build
+# - fix downloading extra deps
+# - fix userspace openssl build
 #
 # Conditional build:
 %bcond_without	kernel		# don't build kernel modules
@@ -15,16 +19,16 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel	2
+%define		rel	0.1
 %define		pname	sysdig
 Summary:	sysdig, a system-level exploration and troubleshooting tool
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	0.1.101
+Version:	0.5.1
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://github.com/draios/sysdig/archive/%{version}/%{pname}-%{version}.tar.gz
-# Source0-md5:	5fe96a3a0fd98b2157a40cb29af41afc
+# Source0-md5:	deba174d3c15639382fe6ec8e0fe70d5
 Patch0:		buildflags.patch
 URL:		http://www.sysdig.org/
 BuildRequires:	rpmbuild(macros) >= 1.701
