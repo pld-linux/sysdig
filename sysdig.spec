@@ -29,18 +29,20 @@ exit 1
 Summary:	sysdig, a system-level exploration and troubleshooting tool
 Summary(pl.UTF-8):	sysdig - narzędzie do przeglądu i rozwiązywania problemów na poziomie systemowym
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	0.5.1
+Version:	0.13.0
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/System
+#Source0Download: https://github.com/draios/sysdig/releases
 Source0:	https://github.com/draios/sysdig/archive/%{version}/%{pname}-%{version}.tar.gz
-# Source0-md5:	deba174d3c15639382fe6ec8e0fe70d5
+# Source0-md5:	a8658daee5277d2a3a0bbb8381fb020f
 Patch0:		buildflags.patch
 URL:		http://www.sysdig.org/
 BuildRequires:	rpmbuild(macros) >= 1.701
 %if %{with userspace}
 BuildRequires:	cmake >= 2.8.2
 BuildRequires:	curl-devel >= 7.45.0
+BuildRequires:	jq-devel >= 1.5
 BuildRequires:	jsoncpp-devel
 BuildRequires:	libb64-devel >= 1.2
 BuildRequires:	libstdc++-devel >= 6:4.4
@@ -182,6 +184,7 @@ cd build
 	-DBUILD_DRIVER=OFF \
 	-DUSE_BUNDLED_B64=OFF \
 	-DUSE_BUNDLED_CURL=OFF \
+	-DUSE_BUNDLED_JQ=OFF \
 	-DUSE_BUNDLED_JSONCPP=OFF \
 	-DUSE_BUNDLED_LUAJIT=OFF \
 	-DUSE_BUNDLED_NCURSES=OFF \
