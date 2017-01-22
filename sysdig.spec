@@ -1,8 +1,3 @@
-# TODO
-# - fix kernel build
-#    Reason: /usr/src/BUILD/sysdig-0.5.1/driver/main.c:51:27: fatal error: driver_config.h: No such file or directory
-# - fix downloading extra deps
-# - fix userspace openssl build
 #
 # NOTES:
 # - https://github.com/draios/sysdig/wiki/How-to-Install-Sysdig-from-the-Source-Code
@@ -24,7 +19,7 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel	0.1
+%define		rel	1
 %define		pname	sysdig
 Summary:	sysdig, a system-level exploration and troubleshooting tool
 Summary(pl.UTF-8):	sysdig - narzędzie do przeglądu i rozwiązywania problemów na poziomie systemowym
@@ -39,7 +34,6 @@ Source0:	https://github.com/draios/sysdig/archive/%{version}/%{pname}-%{version}
 Patch0:		buildflags.patch
 URL:		http://www.sysdig.org/
 BuildRequires:	rpmbuild(macros) >= 1.701
-%if %{with userspace}
 BuildRequires:	cmake >= 2.8.2
 BuildRequires:	curl-devel >= 7.45.0
 BuildRequires:	jq-devel >= 1.5
@@ -52,11 +46,12 @@ BuildRequires:	ncurses-devel >= 5.9
 BuildRequires:	openssl-devel >= 1.0.2
 BuildRequires:	zlib-devel >= 1.2.8
 %{!?with_luajit:BuildConflicts:	luajit-devel}
+%{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
+%if %{with userspace}
 ExclusiveArch:	%{ix86} %{x8664}
 %else
 ExclusiveArch:	%{ix86} %{x8664} x32
 %endif
-%{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # constify %{name}
@@ -168,14 +163,7 @@ Ten pakiet zawiera moduł sysdig-probe for jądra Linuksa.\
 %setup -q -n %{pname}-%{version}
 %patch0 -p1
 
-# we need just obj-m from the file
-cp driver/Makefile{.in,}
-%{__sed} -i -e 's/@KBUILD_FLAGS@//' driver/Makefile
-
 %build
-%{?with_kernel:%{expand:%build_kernel_packages}}
-
-%if %{with userspace}
 install -d build
 cd build
 %cmake .. \
@@ -190,8 +178,15 @@ cd build
 	-DUSE_BUNDLED_NCURSES=OFF \
 	-DUSE_BUNDLED_OPENSSL=OFF \
 	-DUSE_BUNDLED_ZLIB=OFF
+cd ..
 
-%{__make}
+%if %{with kernel}
+cp -f build/driver/Makefile.dkms driver/Makefile
+%{expand:%build_kernel_packages}
+%endif
+
+%if %{with userspace}
+%{__make} -C build
 %endif
 
 %install
