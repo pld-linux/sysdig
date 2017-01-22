@@ -8,9 +8,9 @@
 # - https://github.com/draios/sysdig/wiki/How-to-Install-Sysdig-from-the-Source-Code
 #
 # Conditional build:
-%bcond_without	kernel		# don't build kernel modules
-%bcond_without	userspace	# don't build userspace programs
-%bcond_without	dkms		# build dkms package
+%bcond_without	kernel		# kernel modules
+%bcond_without	userspace	# userspace packages
+%bcond_without	dkms		# DKMS package
 
 %if 0%{?_pld_builder:1} && %{with kernel} && %{with userspace}
 %{error:kernel and userspace cannot be built at the same time on PLD builders}
@@ -26,6 +26,7 @@ exit 1
 %define		rel	0.1
 %define		pname	sysdig
 Summary:	sysdig, a system-level exploration and troubleshooting tool
+Summary(pl.UTF-8):	sysdig - narzędzie do przeglądu i rozwiązywania problemów na poziomie systemowym
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
 Version:	0.5.1
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
@@ -65,8 +66,18 @@ filter and decode these events in order to extract useful information.
 Sysdig can be used to inspect systems live in real-time, or to
 generate trace files that can be analyzed at a later stage.
 
+%description -l pl.UTF-8
+Sysdig obsługuje maszyny fizyczne i wirtualne na poziomie systemu
+operacyjnego, instalując się w jądrze Linuksa i przechwytując
+wywołania systemowe oraz inne zdarzenia systemu. Następnie, przy
+użyciu interfejsu linii poleceń sysdiga można odfiltrować i zdekodować
+te zdarzenia, aby wydobyć z nich przydatne informacje. Sysdiga można
+używać do dozorowania systemów w czasie rzeczywistym albo generowania
+plików śladów do późniejszej analizy.
+
 %package -n dkms-%{name}
 Summary:	DKMS-ready driver for sysdig
+Summary(pl.UTF-8):	Sterownik sysdiga zgodny z DKMS
 License:	GPL v2+
 Group:		Base/Kernel
 Requires(pre,post):	dkms >= 2.1.0.0
@@ -77,9 +88,12 @@ BuildArch:	noarch
 %description -n dkms-%{name}
 This package contains a DKMS-ready driver for sysdig.
 
+%description -n dkms-%{name} -l pl.UTF-8
+Ten pakiet zawiera sterownik sysdiga w postaci zgodnej z DKMS.
+
 %package -n bash-completion-%{name}
-Summary:	bash-completion for sysdig
-Summary(pl.UTF-8):	Bashowe dopełnianie składni dla sysdig
+Summary:	bash-completion for sysdig command
+Summary(pl.UTF-8):	Bashowe dopełnianie składni polecenia sysdig
 Group:		Applications/Shells
 Requires:	%{name} = %{version}-%{rel}
 Requires:	bash-completion
@@ -88,10 +102,14 @@ BuildArch:	noarch
 %endif
 
 %description -n bash-completion-%{name}
-bash-completion for sysdig.
+bash-completion for sysdig command.
+
+%description -n bash-completion-%{name} -l pl.UTF-8
+Bashowe dopełnianie składni polecenia sysdig.
 
 %package -n zsh-completion-%{name}
-Summary:	zsh-completion for sysdig
+Summary:	zsh-completion for sysdig command
+Summary(pl.UTF-8):	Dopełnianie składni polecenia sysdig w powłoce zsh
 Group:		Applications/Shells
 Requires:	%{name} = %{version}-%{rel}
 %if "%{_rpmversion}" >= "5"
@@ -99,11 +117,15 @@ BuildArch:	noarch
 %endif
 
 %description -n zsh-completion-%{name}
-zsh-completion for sysdig.
+zsh-completion for sysdig command.
+
+%description -n zsh-completion-%{name} -l pl.UTF-8
+Dopełnianie składni polecenia sysdig w powłoce zsh.
 
 %define	kernel_pkg()\
 %package -n kernel%{_alt_kernel}-misc-%{pname}\
 Summary:	Linux driver for sysdig\
+Summary(pl.UTF-8):	Sterownik jądra Linuksa dla sysdiga\
 Release:	%{rel}@%{_kernel_ver_str}\
 Group:		Base/Kernel\
 Requires(post,postun):	/sbin/depmod\
@@ -111,9 +133,10 @@ Requires(post,postun):	/sbin/depmod\
 Requires(postun):	%releq_kernel\
 \
 %description -n kernel%{_alt_kernel}-misc-%{pname}\
-This is driver for sysdig-probe for Linux.\
+This is sysdig-probe module for Linux.\
 \
-This package contains Linux module.\
+%description -n kernel%{_alt_kernel}-misc-%{pname} -l pl.UTF-8\
+Ten pakiet zawiera moduł sysdig-probe for jądra Linuksa.\
 \
 %if %{with kernel}\
 %files -n kernel%{_alt_kernel}-misc-%{pname}\
@@ -149,7 +172,7 @@ cp driver/Makefile{.in,}
 %if %{with userspace}
 install -d build
 cd build
-%cmake \
+%cmake .. \
 	-DDIR_ETC=%{_sysconfdir} \
 	-DSYSDIG_VERSION=%{version}-%{rel} \
 	-DBUILD_DRIVER=OFF \
@@ -158,13 +181,14 @@ cd build
 	-DUSE_BUNDLED_LUAJIT=OFF \
 	-DUSE_BUNDLED_NCURSES=OFF \
 	-DUSE_BUNDLED_OPENSSL=OFF \
-	-DUSE_BUNDLED_ZLIB=OFF \
-	..
+	-DUSE_BUNDLED_ZLIB=OFF
+
 %{__make}
 %endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
+
 %if %{with userspace}
 %{__make} -C build install \
 	DESTDIR=$RPM_BUILD_ROOT
