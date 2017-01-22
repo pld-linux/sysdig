@@ -11,6 +11,7 @@
 %bcond_without	kernel		# kernel modules
 %bcond_without	userspace	# userspace packages
 %bcond_without	dkms		# DKMS package
+%bcond_without	luajit		# use plain lua5.1 instead of luajit
 
 %if 0%{?_pld_builder:1} && %{with kernel} && %{with userspace}
 %{error:kernel and userspace cannot be built at the same time on PLD builders}
@@ -41,11 +42,14 @@ BuildRequires:	rpmbuild(macros) >= 1.701
 BuildRequires:	cmake >= 2.8.2
 BuildRequires:	curl-devel >= 7.45.0
 BuildRequires:	jsoncpp-devel
+BuildRequires:	libb64-devel >= 1.2
 BuildRequires:	libstdc++-devel >= 6:4.4
-BuildRequires:	luajit-devel >= 2.0.3
+%{!?with_luajit:BuildRequires:	lua5.1-devel >= 5.1}
+%{?with_luajit:BuildRequires:	luajit-devel >= 2.0.3}
 BuildRequires:	ncurses-devel >= 5.9
 BuildRequires:	openssl-devel >= 1.0.2
 BuildRequires:	zlib-devel >= 1.2.8
+%{!?with_luajit:BuildConflicts:	luajit-devel}
 ExclusiveArch:	%{ix86} %{x8664}
 %else
 ExclusiveArch:	%{ix86} %{x8664} x32
@@ -176,6 +180,7 @@ cd build
 	-DDIR_ETC=%{_sysconfdir} \
 	-DSYSDIG_VERSION=%{version}-%{rel} \
 	-DBUILD_DRIVER=OFF \
+	-DUSE_BUNDLED_B64=OFF \
 	-DUSE_BUNDLED_CURL=OFF \
 	-DUSE_BUNDLED_JSONCPP=OFF \
 	-DUSE_BUNDLED_LUAJIT=OFF \
