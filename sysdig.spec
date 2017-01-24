@@ -18,6 +18,9 @@ exit 1
 # nothing to be placed to debuginfo package
 %define		_enable_debug_packages	0
 %endif
+%ifnarch %{ix86} %{x8664} %{arm} mips ppc
+%undefine	with_luajit
+%endif
 
 %define		rel	1
 %define		pname	sysdig
@@ -41,18 +44,14 @@ BuildRequires:	jq-devel >= 1.5
 BuildRequires:	jsoncpp-devel
 BuildRequires:	libb64-devel >= 1.2.1
 BuildRequires:	libstdc++-devel >= 6:4.4
-%{!?with_luajit:BuildRequires:	lua5.1-devel >= 5.1}
+%{!?with_luajit:BuildRequires:	lua51-devel >= 5.1}
 %{?with_luajit:BuildRequires:	luajit-devel >= 2.0.3}
 BuildRequires:	ncurses-devel >= 5.9
 BuildRequires:	openssl-devel >= 1.0.2
 BuildRequires:	zlib-devel >= 1.2.8
 %{!?with_luajit:BuildConflicts:	luajit-devel}
 %{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
-%if %{with userspace}
-ExclusiveArch:	%{ix86} %{x8664}
-%else
 ExclusiveArch:	%{ix86} %{x8664} x32
-%endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # constify %{name}
