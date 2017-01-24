@@ -1,0 +1,13 @@
+--- sysdig-0.13.0/driver/main.c.orig	2016-12-20 16:58:06.000000000 +0100
++++ sysdig-0.13.0/driver/main.c	2017-01-24 20:56:10.452973281 +0100
+@@ -1737,8 +1737,10 @@
+ 	}
+ }
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 9, 1)
+ int __access_remote_vm(struct task_struct *t, struct mm_struct *mm, unsigned long addr,
+ 		       void *buf, int len, int write);
++#endif
+ 
+ TRACEPOINT_PROBE(syscall_procexit_probe, struct task_struct *p)
+ {

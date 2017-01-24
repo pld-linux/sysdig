@@ -32,6 +32,7 @@ Group:		Applications/System
 Source0:	https://github.com/draios/sysdig/archive/%{version}/%{pname}-%{version}.tar.gz
 # Source0-md5:	a8658daee5277d2a3a0bbb8381fb020f
 Patch0:		buildflags.patch
+Patch1:		%{name}-linux4.patch
 URL:		http://www.sysdig.org/
 BuildRequires:	rpmbuild(macros) >= 1.701
 BuildRequires:	cmake >= 2.8.2
@@ -162,6 +163,7 @@ Ten pakiet zawiera moduł sysdig-probe for jądra Linuksa.\
 %prep
 %setup -q -n %{pname}-%{version}
 %patch0 -p1
+%patch1 -p1
 
 %build
 install -d build
