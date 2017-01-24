@@ -38,7 +38,7 @@ BuildRequires:	cmake >= 2.8.2
 BuildRequires:	curl-devel >= 7.45.0
 BuildRequires:	jq-devel >= 1.5
 BuildRequires:	jsoncpp-devel
-BuildRequires:	libb64-devel >= 1.2
+BuildRequires:	libb64-devel >= 1.2.1
 BuildRequires:	libstdc++-devel >= 6:4.4
 %{!?with_luajit:BuildRequires:	lua5.1-devel >= 5.1}
 %{?with_luajit:BuildRequires:	luajit-devel >= 2.0.3}
