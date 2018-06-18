@@ -1,0 +1,104 @@
+--- sysdig-0.21.0/driver/ppm_events.c~	2018-03-29 22:00:53.000000000 +0200
++++ sysdig-0.21.0/driver/ppm_events.c	2018-06-18 20:45:33.813297584 +0200
+@@ -234,7 +234,11 @@
+ 	if (sock) {
+ 
+ 		if (sock->sk) {
++#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 17, 0)
+ 			err = sock->ops->getname(sock, (struct sockaddr *)&sock_address, &sock_address_len, 0);
++#else
++			err = sock->ops->getname(sock, (struct sockaddr *)&sock_address, 0);
++#endif
+ 
+ 			if (err == 0) {
+ 				if(args->event_type == PPME_SOCKET_SENDTO_X)
+@@ -255,7 +259,11 @@
+ 						/*
+ 						 * Suppose is a connected socket, fall back to fd
+ 						 */
++#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 17, 0)
+ 						err = sock->ops->getname(sock, (struct sockaddr *)&peer_address, &peer_address_len, 1);
++#else
++						err = sock->ops->getname(sock, (struct sockaddr *)&peer_address, 1);
++#endif
+ 					} else {
+ 						/*
+ 						 * Get the address len
+@@ -275,7 +283,11 @@
+ 							/*
+ 							 * This case should be very rare, fallback again to sock
+ 							 */
++#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 17, 0)
+ 							err = sock->ops->getname(sock, (struct sockaddr *)&peer_address, &peer_address_len, 1);
++#else
++							err = sock->ops->getname(sock, (struct sockaddr *)&peer_address, 1);
++#endif
+ 						}
+ 					}
+ 				} else if (args->event_type == PPME_SOCKET_SENDMSG_X) {
+@@ -328,9 +340,17 @@
+ 						/*
+ 						 * Suppose it is a connected socket, fall back to fd
+ 						 */
++#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 17, 0)
+ 						err = sock->ops->getname(sock, (struct sockaddr *)&peer_address, &peer_address_len, 1);
++#else
++						err = sock->ops->getname(sock, (struct sockaddr *)&peer_address, 1);
++#endif
+ 				} else
++#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 17, 0)
+ 					err = sock->ops->getname(sock, (struct sockaddr *)&peer_address, &peer_address_len, 1);
++#else
++					err = sock->ops->getname(sock, (struct sockaddr *)&peer_address, 1);
++#endif
+ 
+ 				if (err == 0) {
+ 					family = sock->sk->sk_family;
+@@ -982,7 +1002,11 @@
+ 		return 0;
+ 	}
+ 
++#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 17, 0)
+ 	err = sock->ops->getname(sock, (struct sockaddr *)&sock_address, &sock_address_len, 0);
++#else
++	err = sock->ops->getname(sock, (struct sockaddr *)&sock_address, 0);
++#endif
+ 	ASSERT(err == 0);
+ 
+ 	family = sock->sk->sk_family;
+@@ -993,7 +1017,11 @@
+ 	switch (family) {
+ 	case AF_INET:
+ 		if (!use_userdata) {
++#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 17, 0)
+ 			err = sock->ops->getname(sock, (struct sockaddr *)&peer_address, &peer_address_len, 1);
++#else
++			err = sock->ops->getname(sock, (struct sockaddr *)&peer_address, 1);
++#endif
+ 			if (err == 0) {
+ 				if (is_inbound) {
+ 					sip = ((struct sockaddr_in *) &peer_address)->sin_addr.s_addr;
+@@ -1045,7 +1073,11 @@
+ 		break;
+ 	case AF_INET6:
+ 		if (!use_userdata) {
++#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 17, 0)
+ 			err = sock->ops->getname(sock, (struct sockaddr *)&peer_address, &peer_address_len, 1);
++#else
++			err = sock->ops->getname(sock, (struct sockaddr *)&peer_address, 1);
++#endif
+ 			ASSERT(err == 0);
+ 
+ 			if (is_inbound) {
+@@ -1120,7 +1152,11 @@
+ 			if (is_inbound) {
+ 				us_name = ((struct sockaddr_un *) &sock_address)->sun_path;
+ 			} else {
++#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 17, 0)
+ 				err = sock->ops->getname(sock, (struct sockaddr *)&peer_address, &peer_address_len, 1);
++#else
++				err = sock->ops->getname(sock, (struct sockaddr *)&peer_address, 1);
++#endif
+ 				ASSERT(err == 0);
+ 
+ 				us_name = ((struct sockaddr_un *) &peer_address)->sun_path;

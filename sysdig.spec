@@ -27,14 +27,15 @@ exit 1
 Summary:	sysdig, a system-level exploration and troubleshooting tool
 Summary(pl.UTF-8):	sysdig - narzędzie do przeglądu i rozwiązywania problemów na poziomie systemowym
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	0.20.0
+Version:	0.21.0
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/System
 #Source0Download: https://github.com/draios/sysdig/releases
 Source0:	https://github.com/draios/sysdig/archive/%{version}/%{pname}-%{version}.tar.gz
-# Source0-md5:	0e91d3858a3094be5298370c505ad02d
+# Source0-md5:	e59a49be21e32f2245dbf44aeb53d654
 Patch0:		buildflags.patch
+Patch1:		kernel-4.17.patch
 URL:		http://www.sysdig.org/
 BuildRequires:	rpmbuild(macros) >= 1.701
 BuildRequires:	cmake >= 2.8.2
@@ -161,6 +162,7 @@ Ten pakiet zawiera moduł sysdig-probe for jądra Linuksa.\
 %prep
 %setup -q -n %{pname}-%{version}
 %patch0 -p1
+%patch1 -p1
 
 %build
 install -d build
