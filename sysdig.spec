@@ -22,7 +22,7 @@ exit 1
 %undefine	with_luajit
 %endif
 
-%define		rel	1
+%define		rel	2
 %define		pname	sysdig
 Summary:	sysdig, a system-level exploration and troubleshooting tool
 Summary(pl.UTF-8):	sysdig - narzędzie do przeglądu i rozwiązywania problemów na poziomie systemowym
