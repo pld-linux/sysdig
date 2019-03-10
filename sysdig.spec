@@ -34,6 +34,7 @@ Group:		Applications/System
 #Source0Download: https://github.com/draios/sysdig/releases
 Source0:	https://github.com/draios/sysdig/archive/%{version}/%{pname}-%{version}.tar.gz
 # Source0-md5:	ea98fc19fea18f02651a7955d069dcf1
+Patch0:		kernel-5.0.patch
 URL:		http://www.sysdig.org/
 BuildRequires:	rpmbuild(macros) >= 1.701
 BuildRequires:	cmake >= 2.8.2
@@ -159,6 +160,7 @@ Ten pakiet zawiera moduł sysdig-probe for jądra Linuksa.\
 
 %prep
 %setup -q -n %{pname}-%{version}
+%patch0 -p1
 
 %build
 install -d build

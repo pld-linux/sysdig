@@ -1,0 +1,14 @@
+--- sysdig-0.24.2/driver/ppm_events.c~	2018-12-21 21:38:44.000000000 +0100
++++ sysdig-0.24.2/driver/ppm_events.c	2019-03-10 19:14:00.690671400 +0100
+@@ -46,7 +46,11 @@
+ #ifdef access_ok_noprefault
+ #define ppm_access_ok access_ok_noprefault
+ #else
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 0, 0)
+ #define ppm_access_ok access_ok
++#else
++#define ppm_access_ok(a,b,c) access_ok(b,c)
++#endif
+ #endif
+ 
+ extern bool g_tracers_enabled;
