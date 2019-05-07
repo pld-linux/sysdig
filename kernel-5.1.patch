@@ -1,0 +1,12 @@
+--- sysdig-0.24.2/driver/ppm_flag_helpers.h~	2018-12-21 21:38:44.000000000 +0100
++++ sysdig-0.24.2/driver/ppm_flag_helpers.h	2019-05-07 19:25:30.678391028 +0200
+@@ -13,6 +13,9 @@
+ #include <asm/mman.h>
+ #include <linux/futex.h>
+ #include <linux/ptrace.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0)
++#include <linux/mman.h>
++#endif
+ 
+ #include "ppm.h"
+ 
