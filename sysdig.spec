@@ -22,7 +22,7 @@ exit 1
 %undefine	with_luajit
 %endif
 
-%define		rel	2
+%define		rel	3
 %define		pname	sysdig
 Summary:	sysdig, a system-level exploration and troubleshooting tool
 Summary(pl.UTF-8):	sysdig - narzędzie do przeglądu i rozwiązywania problemów na poziomie systemowym
@@ -36,6 +36,7 @@ Source0:	https://github.com/draios/sysdig/archive/%{version}/%{pname}-%{version}
 # Source0-md5:	ea98fc19fea18f02651a7955d069dcf1
 Patch0:		kernel-5.0.patch
 Patch1:		kernel-5.1.patch
+Patch2:		x32.patch
 URL:		http://www.sysdig.org/
 BuildRequires:	rpmbuild(macros) >= 1.701
 BuildRequires:	cmake >= 2.8.2
@@ -164,6 +165,7 @@ Ten pakiet zawiera moduł sysdig-probe for jądra Linuksa.\
 %setup -q -n %{pname}-%{version}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 install -d build

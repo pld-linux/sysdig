@@ -1,0 +1,47 @@
+diff -ur sysdig-0.24.2/driver/ppm_events_public.h sysdig-0.24.2.x32/driver/ppm_events_public.h
+--- sysdig-0.24.2/driver/ppm_events_public.h	2018-12-21 21:38:44.000000000 +0100
++++ sysdig-0.24.2.x32/driver/ppm_events_public.h	2019-05-24 01:33:30.717535404 +0200
+@@ -1528,7 +1528,7 @@
+ 	enum ppm_event_type exit_event_type;
+ } _packed;
+ 
+-#define SYSCALL_TABLE_SIZE 512
++#define SYSCALL_TABLE_SIZE 1024
+ 
+ /*
+  * Filler table-related definitions
+diff -ur sysdig-0.24.2/driver/syscall_table.c sysdig-0.24.2.x32/driver/syscall_table.c
+--- sysdig-0.24.2/driver/syscall_table.c	2018-12-21 21:38:44.000000000 +0100
++++ sysdig-0.24.2.x32/driver/syscall_table.c	2019-05-24 01:36:03.747789226 +0200
+@@ -27,7 +27,11 @@
+ #endif
+ #else /* __KERNEL__ */
+ #include <linux/unistd.h>
++#ifdef __ILP32__
++#define SYSCALL_TABLE_ID0 __X32_SYSCALL_BIT
++#else
+ #define SYSCALL_TABLE_ID0 0
++#endif
+ #endif /* __KERNEL__ */
+ 
+ #include "ppm_events_public.h"
+@@ -114,7 +115,9 @@
+ 	[__NR_pselect6 - SYSCALL_TABLE_ID0] =                   {UF_USED | UF_ALWAYS_DROP, PPME_GENERIC_E, PPME_GENERIC_X},
+ 	[__NR_epoll_create - SYSCALL_TABLE_ID0] =               {UF_USED | UF_ALWAYS_DROP, PPME_GENERIC_E, PPME_GENERIC_X},
+ 	[__NR_epoll_ctl - SYSCALL_TABLE_ID0] =                  {UF_USED | UF_ALWAYS_DROP, PPME_GENERIC_E, PPME_GENERIC_X},
++#ifdef __NR_uselib
+ 	[__NR_uselib - SYSCALL_TABLE_ID0] =                     {UF_USED | UF_ALWAYS_DROP, PPME_GENERIC_E, PPME_GENERIC_X},
++#endif
+ 	[__NR_sched_setparam - SYSCALL_TABLE_ID0] =             {UF_USED | UF_ALWAYS_DROP, PPME_GENERIC_E, PPME_GENERIC_X},
+ 	[__NR_sched_getparam - SYSCALL_TABLE_ID0] =             {UF_USED | UF_ALWAYS_DROP, PPME_GENERIC_E, PPME_GENERIC_X},
+ 	[__NR_syslog - SYSCALL_TABLE_ID0] =                     {UF_USED | UF_ALWAYS_DROP, PPME_GENERIC_E, PPME_GENERIC_X},
+@@ -360,7 +363,9 @@
+ 	[__NR_symlink - SYSCALL_TABLE_ID0] = PPM_SC_SYMLINK,
+ 	[__NR_lstat - SYSCALL_TABLE_ID0] = PPM_SC_LSTAT,
+ 	[__NR_readlink - SYSCALL_TABLE_ID0] = PPM_SC_READLINK,
++#ifdef __NR_uselib
+ 	[__NR_uselib - SYSCALL_TABLE_ID0] = PPM_SC_USELIB,
++#endif
+ 	[__NR_swapon - SYSCALL_TABLE_ID0] = PPM_SC_SWAPON,
+ 	[__NR_reboot - SYSCALL_TABLE_ID0] = PPM_SC_REBOOT,
+ /* [__NR_old_readdir - SYSCALL_TABLE_ID0] = PPM_SC_NR_OLD_READDIR, */
