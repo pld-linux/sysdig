@@ -22,7 +22,7 @@ exit 1
 %undefine	with_luajit
 %endif
 
-%define		rel	1
+%define		rel	2
 %define		pname	sysdig
 Summary:	sysdig, a system-level exploration and troubleshooting tool
 Summary(pl.UTF-8):	sysdig - narzędzie do przeglądu i rozwiązywania problemów na poziomie systemowym
@@ -48,6 +48,7 @@ BuildRequires:	libstdc++-devel >= 6:4.4
 %{?with_luajit:BuildRequires:	luajit-devel >= 2.0.3}
 BuildRequires:	ncurses-devel >= 5.9
 BuildRequires:	openssl-devel >= 1.0.2
+BuildRequires:	tbb-devel
 BuildRequires:	zlib-devel >= 1.2.8
 %{!?with_luajit:BuildConflicts:	luajit-devel}
 %{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
@@ -171,6 +172,7 @@ cd build
 	-DDIR_ETC=%{_sysconfdir} \
 	-DSYSDIG_VERSION=%{version}-%{rel} \
 	-DBUILD_DRIVER=OFF \
+	-DUSE_BUNDLED_DEPS=OFF \
 	-DUSE_BUNDLED_B64=OFF \
 	-DUSE_BUNDLED_CURL=OFF \
 	-DUSE_BUNDLED_JQ=OFF \
@@ -178,6 +180,7 @@ cd build
 	-DUSE_BUNDLED_LUAJIT=OFF \
 	-DUSE_BUNDLED_NCURSES=OFF \
 	-DUSE_BUNDLED_OPENSSL=OFF \
+	-DUSE_BUNDLED_TBB=OFF \
 	-DUSE_BUNDLED_ZLIB=OFF
 cd ..
 
