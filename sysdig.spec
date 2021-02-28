@@ -84,9 +84,7 @@ Summary(pl.UTF-8):	Sterownik sysdiga zgodny z DKMS
 License:	GPL v2+
 Group:		Base/Kernel
 Requires(pre,post):	dkms >= 2.1.0.0
-%if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
-%endif
 
 %description -n dkms-%{name}
 This package contains a DKMS-ready driver for sysdig.
@@ -100,9 +98,7 @@ Summary(pl.UTF-8):	Bashowe dopełnianie składni polecenia sysdig
 Group:		Applications/Shells
 Requires:	%{name} = %{version}-%{rel}
 Requires:	bash-completion
-%if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
-%endif
 
 %description -n bash-completion-%{name}
 bash-completion for sysdig command.
@@ -115,9 +111,7 @@ Summary:	zsh-completion for sysdig command
 Summary(pl.UTF-8):	Dopełnianie składni polecenia sysdig w powłoce zsh
 Group:		Applications/Shells
 Requires:	%{name} = %{version}-%{rel}
-%if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
-%endif
 
 %description -n zsh-completion-%{name}
 zsh-completion for sysdig command.
