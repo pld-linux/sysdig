@@ -157,9 +157,9 @@ Ten pakiet zawiera moduł sysdig-probe for jądra Linuksa.\
 
 %prep
 %setup -q -n %{pname}-%{version}
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
+%patch -P0 -p1
+%patch -P1 -p1
+%patch -P2 -p1
 
 %build
 install -d build
